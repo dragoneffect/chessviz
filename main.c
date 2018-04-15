@@ -8,13 +8,13 @@
 #define J 18 //количество столбцов
 #define BUFFER_SIZE 5
 
-//для вычисления столбца, в котором содержится буква текущей позиции
+void print_initial_board(char arr[I][J], FILE *board_file);
+void print_board(char arr[I][J], FILE *notes_file);
+int make_a_move(int param, char arr[I][J], int color, FILE *notes_file);
+int turn(int white_or_black);
 int F_current_char(char arr[I][J], char current_ch);
-//для вычисления строки, где находится цифра текущей позиции
 int F_current_number(char arr[I][J], char current_n);
-//для вычисления столбца, в котором содержится буква следующего хода
 int F_next_char(char arr[I][J], char next_ch);
-//для вычисления строки, в котором находится цифра следующего хода
 int F_next_number(char arr[I][J], char next_n);
 int check_for_figure(char arr[I][J], char current_ch, char current_n,
                      char next_ch, char next_n, int color);
@@ -22,11 +22,9 @@ int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
               char next_n);
 int check_for_right_char(char ch);
 int check_for_right_num(char ch);
-//проверка хода
 int check_for_right_move(char first_char, char first_num, char last_char,
                          char last_num);
 int is_it_first_move(char arr[I][J], int current_ch, int current_n);
-//функция для правильного чтения ввода
 int read(int value, const char *input);
 
 int main() {
@@ -36,86 +34,41 @@ int main() {
   FILE *notes;
   //массив, содержащий в себе элементы доски
   char arr_b[I][J];
-
-  int i, j;
   // choice, choice2 - флаги
   int choice = -1;
-  int choice2 = -1;
+  //int choice2 = -1;
   // result - переменная, хранящая в себе количество ходов
   int result = -1;
   /*в переменной flag хранится значение очередности хода. если значение равно 1,
   то ходят белые, если 0 - то черные */
   int flag = 1;
-  /*cur_ch - переменная, в которой хранится буква, содержащаяся в текущей
-  позиции фигуры (e из e2)
-  next_ch - переменная, в которой хранится буква следующего предполагаемого хода
-  (h из h5)
-  cur_n - переменная, в которой хранится цифра текущей позиции фигуры, которой
-  планируется осуществить ход (6 из c6)
-  next_n - переменная, в которой хранится цифра предполагаемого хода (3 из f3)
-  */
-  char cur_ch, next_ch, cur_n, next_n;
-
+  //открываем нужные файлы
   file = fopen("board.txt", "r");
   notes = fopen("notes.txt", "w+");
+  //если удалось открыть файл с доской
   if (file) {
+    //если удалось открыть файл с записями
     if (notes) {
-      //посимвольно считываем данные доски из текстового файла в двумерный
-      //массив
-      for (i = 0; i < I; i++) {
-        for (j = 0; j < J; j++) {
-          arr_b[i][j] = getc(file);
-          putchar(arr_b[i][j]);
-        }
-      }
+      print_initial_board(arr_b, file);
       //закрываем файл доски, нам он уже больше не нужен
       fclose(file);
-
       do {
+        //ввод количества ходов
         result = read(choice, "How many moves do you want to make?");
         if (!result) {
           printf("Please, try again\n");
         }
       } while (!result);
-
+      //пока ходы не закончились
       while (result != 0) {
-
-        printf("\n\nMake your move:\n");
-        scanf("\n%c%c - %c%c", &cur_ch, &cur_n, &next_ch, &next_n);
-
-        printf("\nYour move is: %c%c - %c%c\n\n", cur_ch, cur_n, next_ch,
-               next_n);
-
-        do {
-          choice = check_for_right_move(cur_ch, cur_n, next_ch, next_n);
-          choice2 =
-              check_for_figure(arr_b, cur_ch, cur_n, next_ch, next_n, flag);
-          if (!choice || !choice2) {
-            printf("Wrong move. Try again:\n");
-            scanf("\n%c%c - %c%c", &cur_ch, &cur_n, &next_ch, &next_n);
-          }
-        } while (!choice || !choice2);
+        //делаем ход
+        result = make_a_move(result, arr_b, flag, notes);
         //переключаем очередность движения
-        if (flag == 1) {
-          flag--;
-        } else {
-          flag++;
-        }
-        //записываем ход, позицию доски в файл и выводим ее на экран
-
-        for (i = 0; i < I; i++) {
-          for (j = 0; j < J; j++) {
-            putchar(arr_b[i][j]);
-            fputc(arr_b[i][j], notes);
-          }
-        }
-        fputs("\n\n", notes);
-        result--;
+        flag = turn(flag);
       }
     } else {
       printf("\nCannot open file: notes.txt");
     }
-
   } else {
     printf("\nCannot open file: board.txt");
   }
@@ -123,7 +76,44 @@ int main() {
   return 0;
 }
 
+void print_initial_board(char arr[I][J], FILE *board_file) {
+  //печать изначального состояния доски
+  int i, j;
+  /*посимвольно считываем данные доски из текстового файла в двумерный
+  массив и выводим доску на экран */
+  for (i = 0; i < I; i++) {
+    for (j = 0; j < J; j++) {
+      arr[i][j] = getc(board_file);
+      putchar(arr[i][j]);
+    }
+  }
+}
+
+void print_board(char arr[I][J], FILE *notes_file) {
+  //печать доски
+  int i, j;
+  for (i = 0; i < I; i++) {
+    for (j = 0; j < J; j++) {
+      putchar(arr[i][j]);
+      fputc(arr[i][j], notes_file);
+    }
+  }
+  fputs("\n\n", notes_file);
+}
+
+int turn(int white_or_black) {
+  //переключает очередность хода
+  if (white_or_black == 1) {
+    white_or_black--;
+    return white_or_black;
+  } else {
+    white_or_black++;
+    return white_or_black;
+  }
+}
+
 int read(int value, const char *input) {
+  //функция для правильного чтения ввода
   size_t length = 0;
   char *end = NULL;
   char buf[BUFFER_SIZE] = "";
@@ -166,6 +156,40 @@ int read(int value, const char *input) {
   return value;
 }
 
+int make_a_move(int param, char arr[I][J], int color, FILE *notes_file) {
+  //функция, которая осуществляет ввод значения хода
+  //флаги
+  int choice = -1;
+  int choice2 = -1;
+  /*cur_ch - переменная, в которой хранится буква, содержащаяся в текущей
+  позиции фигуры (e из e2)
+  next_ch - переменная, в которой хранится буква следующего предполагаемого хода
+  (h из h5)
+  cur_n - переменная, в которой хранится цифра текущей позиции фигуры, которой
+  планируется осуществить ход (6 из c6)
+  next_n - переменная, в которой хранится цифра предполагаемого хода (3 из f3)
+  */
+  char cur_ch, next_ch, cur_n, next_n;
+  printf("\n\nMake your move:\n");
+  scanf("\n%c%c - %c%c", &cur_ch, &cur_n, &next_ch, &next_n);
+  printf("\nYour move is: %c%c - %c%c\n\n", cur_ch, cur_n, next_ch,
+         next_n);
+  do {
+    choice = check_for_right_move(cur_ch, cur_n, next_ch, next_n);
+    choice2 =
+        check_for_figure(arr, cur_ch, cur_n, next_ch, next_n, color);
+    if (!choice || !choice2) {
+      printf("Wrong move. Try again:\n");
+      scanf("\n%c%c - %c%c", &cur_ch, &cur_n, &next_ch, &next_n);
+    }
+  } while (!choice || !choice2);
+  //записываем позицию доски в файл и выводим ее на экран
+  print_board(arr, notes_file);
+  param--;
+  return param;
+
+}
+
 int is_it_first_move(char arr[I][J], int current_ch, int current_n) {
   //если это белая пешка, то проверка осуществлена успешно
   if (current_n == 6) {
@@ -195,8 +219,8 @@ int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
   check_next_ch = F_next_char(arr, next_ch);
   //если движение осуществляется снизу вверх (белые)
   if (current_n - check_next_n > 0) {
-    //если разница в две клетки, то проверяем, первый ли это ход, и если да, то
-    //делаем ход
+    /*если разница в две клетки, то проверяем, первый ли это ход, и если да, то
+    делаем ход */
     if (current_n - check_next_n == 2) {
       if (is_it_first_move(arr, current_ch, current_n)) {
         if (arr[current_n][current_ch] == 'P') {
@@ -210,8 +234,8 @@ int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
         return 0;
       }
     }
-    //если разница в одну клетку, то делаем проверку, белые ли это и если да, то
-    //делаем ход
+    /*если разница в одну клетку, то делаем проверку, белые ли это и если да, то
+    делаем ход */
     else if (current_n - check_next_n == 1) {
       if (arr[current_n][current_ch] == 'P') {
         arr[current_n][current_ch] = ' ';
@@ -224,8 +248,8 @@ int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
   }
   //реализация движения для черных (если ход осуществляется сверху вниз)
   else if (current_n - check_next_n < 0) {
-    //если разница в две клетки, и если ход первый, а также если это
-    //действительно черные, то делаем ход
+    /*если разница в две клетки, и если ход первый, а также если это
+    действительно черные, то делаем ход */
     if (check_next_n - current_n == 2) {
       if (is_it_first_move(arr, current_ch, current_n)) {
         if (arr[current_n][current_ch] == 'p') {
@@ -258,9 +282,9 @@ int check_for_figure(char arr[I][J], char current_ch, char current_n,
   //находим положение фигуры в массиве
   check_current_ch = F_current_char(arr, current_ch);
   check_current_n = F_current_number(arr, current_n);
-  /*если фигура - пешка, то дальнейшие события будет обрабатывать функция
-  хода пешки */
+  //если это белая фигура
   if (color == 1) {
+    //если это пешка
     if (arr[check_current_n][check_current_ch] == 'P') {
       if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
         return 1;
@@ -270,7 +294,10 @@ int check_for_figure(char arr[I][J], char current_ch, char current_n,
     } else {
       return 0;
     }
-  } else if (color == 0) {
+  }
+  //если это черная фигура
+  else if (color == 0) {
+    //если это пешка
     if (arr[check_current_n][check_current_ch] == 'p') {
       //проверка на очередность хода
       if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
@@ -286,6 +313,7 @@ int check_for_figure(char arr[I][J], char current_ch, char current_n,
 }
 
 int F_current_char(char arr[I][J], char current_ch) {
+  //для вычисления столбца, в котором содержится буква текущей позиции
   int i, j;
   for (i = 8; i < I; i++) {
     for (j = 0; j < J; j++) {
@@ -298,6 +326,7 @@ int F_current_char(char arr[I][J], char current_ch) {
 }
 
 int F_current_number(char arr[I][J], char current_n) {
+  //для вычисления строки, где находится цифра текущей позиции
   int i, j;
   for (i = 0; i < I; i++) {
     for (j = 0; j < 1; j++) {
@@ -310,6 +339,7 @@ int F_current_number(char arr[I][J], char current_n) {
 }
 
 int F_next_char(char arr[I][J], char next_ch) {
+  //для вычисления столбца, в котором содержится буква следующего хода
   int i, j;
   for (i = 8; i < I; i++) {
     for (j = 0; j < J; j++) {
@@ -322,6 +352,7 @@ int F_next_char(char arr[I][J], char next_ch) {
 }
 
 int F_next_number(char arr[I][J], char next_n) {
+  //для вычисления строки, в котором находится цифра следующего хода
   int i, j;
   for (i = 0; i < I; i++) {
     for (j = 0; j < 1; j++) {
@@ -357,6 +388,7 @@ int check_for_right_num(char ch) {
 
 int check_for_right_move(char first_char, char first_num, char last_char,
                          char last_num) {
+  //проверка хода
   if (check_for_right_char(first_char)) {
     if (check_for_right_num(first_num)) {
       if (check_for_right_char(last_char)) {
