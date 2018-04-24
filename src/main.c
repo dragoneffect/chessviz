@@ -19,8 +19,8 @@ int main() {
   то ходят белые, если 0 - то черные */
   int flag = 1;
   //открываем нужные файлы
-  file = fopen("board.txt", "r");
-  notes = fopen("notes.txt", "w+");
+  file = fopen("src/board.txt", "r");
+  notes = fopen("build/notes.txt", "w+");
   //если удалось открыть файл с доской
   if (file) {
     //если удалось открыть файл с записями
