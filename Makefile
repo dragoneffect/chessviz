@@ -1,7 +1,7 @@
-all: prog.o
+all: build/prog
 
-prog.o: build/main.o build/board.o build/board_print_plain.o build/conversion.o
-	gcc -Wall -Werror build/main.o build/board.o build/board_print_plain.o build/conversion.o -o prog.o
+build/prog: build/main.o build/board.o build/board_print_plain.o build/conversion.o
+	gcc -Wall -Werror build/main.o build/board.o build/board_print_plain.o build/conversion.o -o build/prog
 
 build/main.o: src/main.c
 	gcc -Wall -Werror -c src/main.c -o build/main.o
