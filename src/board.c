@@ -117,31 +117,26 @@ int check_for_figure(char arr[I][J], char current_ch, char current_n,
   //находим положение фигуры в массиве
   check_current_ch = F_current_char(arr, current_ch);
   check_current_n = F_current_number(arr, current_n);
-  //если это белая фигура
-  if (color == 1) {
-    //если это пешка
-    if (arr[check_current_n][check_current_ch] == 'P') {
-      if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
-        return 1;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
+  //если это пешка
+  if (arr[check_current_n][check_current_ch] == 'P') {
+    if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n,
+                  color)) {
+      return 1;
     }
   }
-  //если это черная фигура
-  else if (color == 0) {
-    //если это пешка
-    if (arr[check_current_n][check_current_ch] == 'p') {
-      //проверка на очередность хода
-      if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
-        return 1;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
+  //если это ладья
+  else if (arr[check_current_n][check_current_ch] == 'R' ||
+           arr[check_current_n][check_current_ch] == 'r') {
+    if (rook_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
+      return 1;
+    }
+  }
+  //если это пешка
+  else if (arr[check_current_n][check_current_ch] == 'p') {
+    //проверка на очередность хода
+    if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n,
+                  color)) {
+      return 1;
     }
   }
   return 0;
@@ -159,25 +154,19 @@ int turn(int white_or_black) {
 }
 
 int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
-              char next_n) {
+              char next_n, int color) {
   int check_next_ch, check_next_n;
   check_next_n = F_next_number(arr, next_n);
   check_next_ch = F_next_char(arr, next_ch);
   //если движение осуществляется снизу вверх (белые)
-  if (current_n - check_next_n > 0) {
+  if (current_n - check_next_n > 0 && color == 1) {
     /*если разница в две клетки, то проверяем, первый ли это ход, и если да, то
     делаем ход */
     if (current_n - check_next_n == 2) {
       if (is_it_first_move(arr, current_ch, current_n)) {
-        if (arr[current_n][current_ch] == 'P') {
-          arr[current_n][current_ch] = ' ';
-          arr[check_next_n][check_next_ch] = 'P';
-          return 1;
-        } else {
-          return 0;
-        }
-      } else {
-        return 0;
+        arr[current_n][current_ch] = ' ';
+        arr[check_next_n][check_next_ch] = 'P';
+        return 1;
       }
     }
     /*если разница в одну клетку, то делаем проверку, белые ли это и если да, то
@@ -187,36 +176,54 @@ int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
         arr[current_n][current_ch] = ' ';
         arr[check_next_n][check_next_ch] = 'P';
         return 1;
-      } else {
-        return 0;
       }
     }
   }
   //реализация движения для черных (если ход осуществляется сверху вниз)
-  else if (current_n - check_next_n < 0) {
+  else if (current_n - check_next_n < 0 && color == 0) {
     /*если разница в две клетки, и если ход первый, а также если это
     действительно черные, то делаем ход */
     if (check_next_n - current_n == 2) {
       if (is_it_first_move(arr, current_ch, current_n)) {
-        if (arr[current_n][current_ch] == 'p') {
-          arr[current_n][current_ch] = ' ';
-          arr[check_next_n][check_next_ch] = 'p';
-          return 1;
-        } else {
-          return 0;
-        }
-      } else {
-        return 0;
-      }
-    } else if (check_next_n - current_n == 1) {
-      if (arr[current_n][current_ch] == 'p') {
         arr[current_n][current_ch] = ' ';
         arr[check_next_n][check_next_ch] = 'p';
         return 1;
-      } else {
-        return 0;
       }
+    } else if (check_next_n - current_n == 1) {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'p';
+      return 1;
     }
+  }
+  return 0;
+}
+
+int rook_move(char arr[I][J], int current_ch, int current_n, char next_ch,
+              char next_n) {
+  int check_next_ch, check_next_n;
+  check_next_n = F_next_number(arr, next_n);
+  check_next_ch = F_next_char(arr, next_ch);
+  if ((current_n - check_next_n > 0 || current_n - check_next_n < 0) &&
+      current_ch - check_next_ch == 0) {
+    if (arr[current_n][current_ch] == 'R') {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'R';
+    } else if (arr[current_n][current_ch] == 'r') {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'r';
+    }
+    return 1;
+  } else if ((current_ch - check_next_ch > 0 ||
+              current_ch - check_next_ch < 0) &&
+             current_n - check_next_n == 0) {
+    if (arr[current_n][current_ch] == 'R') {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'R';
+    } else if (arr[current_n][current_ch] == 'r') {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'r';
+    }
+    return 1;
   }
   return 0;
 }
@@ -226,19 +233,13 @@ int is_it_first_move(char arr[I][J], int current_ch, int current_n) {
   if (current_n == 6) {
     if (arr[current_n][current_ch] == 'P') {
       return 1;
-    } else {
-      return 0;
     }
   }
   //если это черная пешка, то проверка успешна
   else if (current_n == 1) {
     if (arr[current_n][current_ch] == 'p') {
       return 1;
-    } else {
-      return 0;
     }
-  } else {
-    return 0;
   }
   return 0;
 }
