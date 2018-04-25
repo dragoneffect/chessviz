@@ -117,22 +117,29 @@ int check_for_figure(char arr[I][J], char current_ch, char current_n,
   //находим положение фигуры в массиве
   check_current_ch = F_current_char(arr, current_ch);
   check_current_n = F_current_number(arr, current_n);
-  //если это пешка
-  if (arr[check_current_n][check_current_ch] == 'P') {
+  //если это белая пешка
+  if (arr[check_current_n][check_current_ch] == 'P' && color == 1) {
     if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n,
                   color)) {
       return 1;
     }
   }
   //если это ладья
-  else if (arr[check_current_n][check_current_ch] == 'R' ||
-           arr[check_current_n][check_current_ch] == 'r') {
+  else if ((arr[check_current_n][check_current_ch] == 'R' && color == 1) ||
+           (arr[check_current_n][check_current_ch] == 'r' && color == 0)) {
     if (rook_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
       return 1;
     }
   }
-  //если это пешка
-  else if (arr[check_current_n][check_current_ch] == 'p') {
+  //если это слон
+  else if ((arr[check_current_n][check_current_ch] == 'B' && color == 1) ||
+           (arr[check_current_n][check_current_ch] == 'b' && color == 0)) {
+    if (bishop_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
+      return 1;
+    }
+  }
+  //если это черная пешка
+  else if (arr[check_current_n][check_current_ch] == 'p' && color == 0) {
     //проверка на очередность хода
     if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n,
                   color)) {
@@ -203,8 +210,7 @@ int rook_move(char arr[I][J], int current_ch, int current_n, char next_ch,
   int check_next_ch, check_next_n;
   check_next_n = F_next_number(arr, next_n);
   check_next_ch = F_next_char(arr, next_ch);
-  if ((current_n - check_next_n > 0 || current_n - check_next_n < 0) &&
-      current_ch - check_next_ch == 0) {
+  if (current_ch - check_next_ch == 0 || current_n - check_next_n == 0) {
     if (arr[current_n][current_ch] == 'R') {
       arr[current_n][current_ch] = ' ';
       arr[check_next_n][check_next_ch] = 'R';
@@ -213,15 +219,23 @@ int rook_move(char arr[I][J], int current_ch, int current_n, char next_ch,
       arr[check_next_n][check_next_ch] = 'r';
     }
     return 1;
-  } else if ((current_ch - check_next_ch > 0 ||
-              current_ch - check_next_ch < 0) &&
-             current_n - check_next_n == 0) {
-    if (arr[current_n][current_ch] == 'R') {
+  }
+  return 0;
+}
+
+int bishop_move(char arr[I][J], int current_ch, int current_n, char next_ch,
+                char next_n) {
+  int check_next_ch, check_next_n;
+  check_next_n = F_next_number(arr, next_n);
+  check_next_ch = F_next_char(arr, next_ch);
+  if (((current_n - check_next_n) == (current_ch - check_next_ch)) ||
+((current_n - check_next_n) == (check_next_ch - current_ch))) {
+    if (arr[current_n][current_ch] == 'B') {
       arr[current_n][current_ch] = ' ';
-      arr[check_next_n][check_next_ch] = 'R';
-    } else if (arr[current_n][current_ch] == 'r') {
+      arr[check_next_n][check_next_ch] = 'B';
+    } else if (arr[current_n][current_ch] == 'b') {
       arr[current_n][current_ch] = ' ';
-      arr[check_next_n][check_next_ch] = 'r';
+      arr[check_next_n][check_next_ch] = 'b';
     }
     return 1;
   }

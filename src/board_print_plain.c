@@ -5,10 +5,12 @@ void print_initial_board(char arr[I][J], FILE *board_file) {
   int i, j;
   /*посимвольно считываем данные доски из текстового файла в двумерный
   массив и выводим доску на экран */
+  printf(" ");
   for (i = 0; i < I; i++) {
     for (j = 0; j < J; j++) {
       arr[i][j] = getc(board_file);
       putchar(arr[i][j]);
+      printf(" ");
     }
   }
 }
@@ -16,10 +18,12 @@ void print_initial_board(char arr[I][J], FILE *board_file) {
 void print_board(char arr[I][J], FILE *notes_file) {
   //печать доски и запись в файл с ходами
   int i, j;
+  printf(" ");
   for (i = 0; i < I; i++) {
     for (j = 0; j < J; j++) {
       putchar(arr[i][j]);
       fputc(arr[i][j], notes_file);
+      printf(" ");
     }
   }
   fputs("\n\n", notes_file);
