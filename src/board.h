@@ -20,5 +20,6 @@ int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch, char 
 int is_it_first_move(char arr[I][J], int current_ch, int current_n);
 int rook_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 int bishop_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
+int queen_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 
 #endif
