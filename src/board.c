@@ -67,7 +67,8 @@ int make_a_move(int param, char arr[I][J], int color, FILE *notes_file) {
          next_n);
   do {
     choice = check_for_right_move(cur_ch, cur_n, next_ch, next_n);
-    choice2 = check_for_figure(operation, arr, cur_ch, cur_n, next_ch, next_n, color);
+    choice2 =
+        check_for_figure(operation, arr, cur_ch, cur_n, next_ch, next_n, color);
     if (!choice || !choice2) {
       printf("Wrong move. Try again:\n");
       scanf("\n%c%c %c %c%c", &cur_ch, &cur_n, &operation, &next_ch, &next_n);
@@ -314,9 +315,13 @@ int king_move(char arr[I][J], int current_ch, int current_n, char next_ch,
   int check_next_ch, check_next_n;
   check_next_n = F_next_number(arr, next_n);
   check_next_ch = F_next_char(arr, next_ch);
-  if (((current_n - check_next_n) == (current_ch - check_next_ch)) == 1 ||
-      ((current_n - check_next_n) == (check_next_ch - current_ch)) == 1 ||
-      (current_ch - check_next_ch == 0) || (current_n - check_next_n == 0)) {
+  if (((current_n == check_next_n) && ((current_ch - check_next_ch) == 1 ||
+                                       (check_next_ch - current_ch) == 1)) ||
+      ((current_ch == check_next_ch) &&
+       ((current_n - check_next_n) == 1 || (check_next_n - current_n) == 1)) ||
+      ((((current_n - check_next_n) == 1) || (check_next_n - current_n) == 1) &&
+       ((current_ch - check_next_ch) == 1 ||
+        (check_next_ch - current_ch) == 1))) {
     if (arr[current_n][current_ch] == 'K') {
       arr[current_n][current_ch] = ' ';
       arr[check_next_n][check_next_ch] = 'K';
