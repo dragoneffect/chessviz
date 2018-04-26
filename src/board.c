@@ -183,6 +183,13 @@ int check_for_figure(char op, char arr[I][J], char current_ch, char current_n,
         return 1;
       }
     }
+    //если это конь
+    else if ((arr[check_current_n][check_current_ch] == 'N' && color == 1) ||
+             (arr[check_current_n][check_current_ch] == 'n' && color == 0)) {
+      if (knight_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
+        return 1;
+      }
+    }
     //если это черная пешка
     else if (arr[check_current_n][check_current_ch] == 'p' && color == 0) {
       //проверка на очередность хода
@@ -328,6 +335,31 @@ int king_move(char arr[I][J], int current_ch, int current_n, char next_ch,
     } else if (arr[current_n][current_ch] == 'k') {
       arr[current_n][current_ch] = ' ';
       arr[check_next_n][check_next_ch] = 'k';
+    }
+    return 1;
+  }
+  return 0;
+}
+
+int knight_move(char arr[I][J], int current_ch, int current_n, char next_ch,
+                char next_n) {
+  int check_next_ch, check_next_n;
+  check_next_n = F_next_number(arr, next_n);
+  check_next_ch = F_next_char(arr, next_ch);
+  if (((((current_n - check_next_n) == 1) ||
+        ((check_next_n - current_n) == 1)) &&
+       (((current_ch - check_next_ch) == 2) ||
+        ((check_next_ch - current_ch) == 2))) ||
+      ((((current_n - check_next_n) == 2) ||
+        ((check_next_n - current_n) == 2)) &&
+       (((current_ch - check_next_ch) == 1) ||
+        ((check_next_ch - current_ch) == 1)))) {
+    if (arr[current_n][current_ch] == 'N') {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'N';
+    } else if (arr[current_n][current_ch] == 'n') {
+      arr[current_n][current_ch] = ' ';
+      arr[check_next_n][check_next_ch] = 'n';
     }
     return 1;
   }

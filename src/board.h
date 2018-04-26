@@ -23,5 +23,6 @@ int bishop_move(char arr[I][J], int current_ch, int current_n, char next_ch, cha
 int queen_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 int king_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 int take_or_move(char op, char arr[I][J], char next_ch, char next_n);
+int knight_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 
 #endif
