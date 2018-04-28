@@ -1,4 +1,4 @@
-TARGET = bin/prog
+TARGET = bin/chessviz
 CC = gcc
 CFLAGS = -Wall -Werror
 

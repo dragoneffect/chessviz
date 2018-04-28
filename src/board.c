@@ -152,7 +152,7 @@ int check_for_figure(char op, char arr[I][J], char current_ch, char current_n,
         (arr[check_current_n][check_current_ch] == 'p' && color == 0)) {
       if (possibility_to_move(arr, check_current_ch, check_current_n, next_ch,
                               next_n)) {
-        if (pawn_move(arr, check_current_ch, check_current_n, next_ch,
+        if (pawn_move(op, arr, check_current_ch, check_current_n, next_ch,
                       next_n)) {
           return 1;
         }
@@ -226,36 +226,54 @@ int turn(int white_or_black) {
   }
 }
 
-int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
-              char next_n) {
+int pawn_move(char move, char arr[I][J], int current_ch, int current_n,
+              char next_ch, char next_n) {
   int check_next_ch, check_next_n;
   check_next_n = F_next_number(arr, next_n);
   check_next_ch = F_next_char(arr, next_ch);
-  //если движение осуществляется снизу вверх (белые)
-  if (current_n - check_next_n > 0 || current_n - check_next_n < 0) {
-    /*если разница в две клетки, то проверяем, первый ли это ход, и если да,
-    то
-    делаем ход */
-    if (current_n - check_next_n == 2 || check_next_n - current_n == 2) {
-      if (is_it_first_move(arr, current_ch, current_n)) {
+  if (move == '-') {
+    if (current_ch == check_next_ch) {
+      if (current_n - check_next_n == 2 || check_next_n - current_n == 2) {
+        if (is_it_first_move(arr, current_ch, current_n)) {
+          if (arr[current_n][current_ch] == 'P') {
+            arr[current_n][current_ch] = ' ';
+            arr[check_next_n][check_next_ch] = 'P';
+            return 1;
+          } else if (arr[current_n][current_ch] == 'p') {
+            arr[current_n][current_ch] = ' ';
+            arr[check_next_n][check_next_ch] = 'p';
+            return 1;
+          }
+        }
+      } else if (current_n - check_next_n == 1 ||
+                 check_next_n - current_n == 1) {
         if (arr[current_n][current_ch] == 'P') {
           arr[current_n][current_ch] = ' ';
           arr[check_next_n][check_next_ch] = 'P';
+          return 1;
         } else if (arr[current_n][current_ch] == 'p') {
           arr[current_n][current_ch] = ' ';
           arr[check_next_n][check_next_ch] = 'p';
+          return 1;
         }
-        return 1;
       }
-    } else if (current_n - check_next_n == 1 || check_next_n - current_n == 1) {
+    }
+  } else if (move == 'x') {
+    if (current_n - check_next_n == 1 &&
+        (current_ch - check_next_ch == -1 || current_ch - check_next_ch == 1)) {
       if (arr[current_n][current_ch] == 'P') {
         arr[current_n][current_ch] = ' ';
         arr[check_next_n][check_next_ch] = 'P';
-      } else if (arr[current_n][current_ch] == 'p') {
+        return 1;
+      }
+    } else if (check_next_n - current_n == 1 &&
+               (current_ch - check_next_ch == -1 ||
+                current_ch - check_next_ch == 1)) {
+      if (arr[current_n][current_ch] == 'p') {
         arr[current_n][current_ch] = ' ';
         arr[check_next_n][check_next_ch] = 'p';
+        return 1;
       }
-      return 1;
     }
   }
   return 0;
