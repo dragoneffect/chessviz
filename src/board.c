@@ -394,14 +394,12 @@ int possibility_to_move(char arr[I][J], int current_ch, int current_n,
     if ((current_ch - check_next_ch) < 0) {
       for (i = current_ch + 1; i < check_next_ch; i++) {
         if (arr[current_n][i] != ' ') {
-          printf("Cell is taken\n");
           return 0;
         }
       }
     } else {
       for (i = check_next_ch + 1; i < current_ch; i++) {
         if (arr[current_n][i] != ' ') {
-          printf("Cell is taken123\n");
           return 0;
         }
       }
@@ -412,14 +410,12 @@ int possibility_to_move(char arr[I][J], int current_ch, int current_n,
     if ((current_n - check_next_n) < 0) {
       for (i = current_n + 1; i < check_next_n; i++) {
         if (arr[i][current_ch] != ' ') {
-          printf("Cell is taken\n");
           return 0;
         }
       }
     } else {
       for (i = check_next_n + 1; i < current_n; i++) {
         if (arr[i][current_ch] != ' ') {
-          printf("Cell is taken123\n");
           return 0;
         }
       }
@@ -429,7 +425,6 @@ int possibility_to_move(char arr[I][J], int current_ch, int current_n,
   else if (current_n - check_next_n < 0 && current_ch - check_next_ch < 0) {
     for (i = current_n + 1, j = current_ch + 1; i < check_next_n; i++, j++) {
       if (arr[i][j] != ' ') {
-        printf("Cell if taken diag right down\n");
         return 0;
       }
     }
@@ -438,7 +433,6 @@ int possibility_to_move(char arr[I][J], int current_ch, int current_n,
   else if (current_n - check_next_n < 0 && current_ch - check_next_ch > 0) {
     for (i = current_n + 1, j = current_ch - 1; i < check_next_n; i++, j--) {
       if (arr[i][j] != ' ') {
-        printf("Cell if taken diag left down\n");
         return 0;
       }
     }
@@ -447,7 +441,6 @@ int possibility_to_move(char arr[I][J], int current_ch, int current_n,
   else if (current_n - check_next_n > 0 && current_ch - check_next_ch < 0) {
     for (i = current_n - 1, j = current_ch + 1; i > check_next_n; i--, j++) {
       if (arr[i][j] != ' ') {
-        printf("Cell if taken diag right up\n");
         return 0;
       }
     }
@@ -456,7 +449,6 @@ int possibility_to_move(char arr[I][J], int current_ch, int current_n,
   else if (current_n - check_next_n > 0 && current_ch - check_next_ch > 0) {
     for (i = current_n - 1, j = current_ch - 1; i > check_next_n; i--, j--) {
       if (arr[i][j] != ' ') {
-        printf("Cell if taken diag left up\n");
         return 0;
       }
     }
