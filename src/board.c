@@ -147,54 +147,67 @@ int check_for_figure(char op, char arr[I][J], char current_ch, char current_n,
   check_current_ch = F_current_char(arr, current_ch);
   check_current_n = F_current_number(arr, current_n);
   if (take_or_move(op, arr, next_ch, next_n)) {
-    //если это белая пешка
-    if (arr[check_current_n][check_current_ch] == 'P' && color == 1) {
-      if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n,
-                    color)) {
-        return 1;
+    //если это пешка
+    if ((arr[check_current_n][check_current_ch] == 'P' && color == 1) ||
+        (arr[check_current_n][check_current_ch] == 'p' && color == 0)) {
+      if (possibility_to_move(arr, check_current_ch, check_current_n, next_ch,
+                              next_n)) {
+        if (pawn_move(arr, check_current_ch, check_current_n, next_ch,
+                      next_n)) {
+          return 1;
+        }
       }
     }
     //если это ладья
     else if ((arr[check_current_n][check_current_ch] == 'R' && color == 1) ||
              (arr[check_current_n][check_current_ch] == 'r' && color == 0)) {
-      if (rook_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
-        return 1;
+      if (possibility_to_move(arr, check_current_ch, check_current_n, next_ch,
+                              next_n)) {
+        if (rook_move(arr, check_current_ch, check_current_n, next_ch,
+                      next_n)) {
+          return 1;
+        }
       }
     }
     //если это слон
     else if ((arr[check_current_n][check_current_ch] == 'B' && color == 1) ||
              (arr[check_current_n][check_current_ch] == 'b' && color == 0)) {
-      if (bishop_move(arr, check_current_ch, check_current_n, next_ch,
-                      next_n)) {
-        return 1;
+      if (possibility_to_move(arr, check_current_ch, check_current_n, next_ch,
+                              next_n)) {
+        if (bishop_move(arr, check_current_ch, check_current_n, next_ch,
+                        next_n)) {
+          return 1;
+        }
       }
     }
     //если это ферзь
     else if ((arr[check_current_n][check_current_ch] == 'Q' && color == 1) ||
              (arr[check_current_n][check_current_ch] == 'q' && color == 0)) {
-      if (queen_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
-        return 1;
+      if (possibility_to_move(arr, check_current_ch, check_current_n, next_ch,
+                              next_n)) {
+        if (queen_move(arr, check_current_ch, check_current_n, next_ch,
+                       next_n)) {
+          return 1;
+        }
       }
     }
     //если это король
     else if ((arr[check_current_n][check_current_ch] == 'K' && color == 1) ||
              (arr[check_current_n][check_current_ch] == 'k' && color == 0)) {
-      if (king_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
-        return 1;
+      if (possibility_to_move(arr, check_current_ch, check_current_n, next_ch,
+                              next_n)) {
+        if (king_move(arr, check_current_ch, check_current_n, next_ch,
+                      next_n)) {
+          return 1;
+        }
       }
     }
+
     //если это конь
     else if ((arr[check_current_n][check_current_ch] == 'N' && color == 1) ||
              (arr[check_current_n][check_current_ch] == 'n' && color == 0)) {
-      if (knight_move(arr, check_current_ch, check_current_n, next_ch, next_n)) {
-        return 1;
-      }
-    }
-    //если это черная пешка
-    else if (arr[check_current_n][check_current_ch] == 'p' && color == 0) {
-      //проверка на очередность хода
-      if (pawn_move(arr, check_current_ch, check_current_n, next_ch, next_n,
-                    color)) {
+      if (knight_move(arr, check_current_ch, check_current_n, next_ch,
+                      next_n)) {
         return 1;
       }
     }
@@ -214,46 +227,34 @@ int turn(int white_or_black) {
 }
 
 int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch,
-              char next_n, int color) {
+              char next_n) {
   int check_next_ch, check_next_n;
   check_next_n = F_next_number(arr, next_n);
   check_next_ch = F_next_char(arr, next_ch);
   //если движение осуществляется снизу вверх (белые)
-  if (current_n - check_next_n > 0 && color == 1) {
+  if (current_n - check_next_n > 0 || current_n - check_next_n < 0) {
     /*если разница в две клетки, то проверяем, первый ли это ход, и если да,
     то
     делаем ход */
-    if (current_n - check_next_n == 2) {
+    if (current_n - check_next_n == 2 || check_next_n - current_n == 2) {
       if (is_it_first_move(arr, current_ch, current_n)) {
-        arr[current_n][current_ch] = ' ';
-        arr[check_next_n][check_next_ch] = 'P';
+        if (arr[current_n][current_ch] == 'P') {
+          arr[current_n][current_ch] = ' ';
+          arr[check_next_n][check_next_ch] = 'P';
+        } else if (arr[current_n][current_ch] == 'p') {
+          arr[current_n][current_ch] = ' ';
+          arr[check_next_n][check_next_ch] = 'p';
+        }
         return 1;
       }
-    }
-    /*если разница в одну клетку, то делаем проверку, белые ли это и если да,
-    то
-    делаем ход */
-    else if (current_n - check_next_n == 1) {
+    } else if (current_n - check_next_n == 1 || check_next_n - current_n == 1) {
       if (arr[current_n][current_ch] == 'P') {
         arr[current_n][current_ch] = ' ';
         arr[check_next_n][check_next_ch] = 'P';
-        return 1;
-      }
-    }
-  }
-  //реализация движения для черных (если ход осуществляется сверху вниз)
-  else if (current_n - check_next_n < 0 && color == 0) {
-    /*если разница в две клетки, и если ход первый, а также если это
-    действительно черные, то делаем ход */
-    if (check_next_n - current_n == 2) {
-      if (is_it_first_move(arr, current_ch, current_n)) {
+      } else if (arr[current_n][current_ch] == 'p') {
         arr[current_n][current_ch] = ' ';
         arr[check_next_n][check_next_ch] = 'p';
-        return 1;
       }
-    } else if (check_next_n - current_n == 1) {
-      arr[current_n][current_ch] = ' ';
-      arr[check_next_n][check_next_ch] = 'p';
       return 1;
     }
   }
@@ -380,4 +381,85 @@ int is_it_first_move(char arr[I][J], int current_ch, int current_n) {
     }
   }
   return 0;
+}
+
+int possibility_to_move(char arr[I][J], int current_ch, int current_n,
+                        char next_ch, char next_n) {
+  int i, j;
+  int check_next_ch, check_next_n;
+  check_next_n = F_next_number(arr, next_n);
+  check_next_ch = F_next_char(arr, next_ch);
+  //если ход по горизонтали
+  if (current_n == check_next_n) {
+    if ((current_ch - check_next_ch) < 0) {
+      for (i = current_ch + 1; i < check_next_ch; i++) {
+        if (arr[current_n][i] != ' ') {
+          printf("Cell is taken\n");
+          return 0;
+        }
+      }
+    } else {
+      for (i = check_next_ch + 1; i < current_ch; i++) {
+        if (arr[current_n][i] != ' ') {
+          printf("Cell is taken123\n");
+          return 0;
+        }
+      }
+    }
+  }
+  //если ход по вертикали
+  else if (current_ch == check_next_ch) {
+    if ((current_n - check_next_n) < 0) {
+      for (i = current_n + 1; i < check_next_n; i++) {
+        if (arr[i][current_ch] != ' ') {
+          printf("Cell is taken\n");
+          return 0;
+        }
+      }
+    } else {
+      for (i = check_next_n + 1; i < current_n; i++) {
+        if (arr[i][current_ch] != ' ') {
+          printf("Cell is taken123\n");
+          return 0;
+        }
+      }
+    }
+  }
+  //ход по диагонали вниз и направо
+  else if (current_n - check_next_n < 0 && current_ch - check_next_ch < 0) {
+    for (i = current_n + 1, j = current_ch + 1; i < check_next_n; i++, j++) {
+      if (arr[i][j] != ' ') {
+        printf("Cell if taken diag right down\n");
+        return 0;
+      }
+    }
+  }
+  //ход по диагонали вниз и налево
+  else if (current_n - check_next_n < 0 && current_ch - check_next_ch > 0) {
+    for (i = current_n + 1, j = current_ch - 1; i < check_next_n; i++, j--) {
+      if (arr[i][j] != ' ') {
+        printf("Cell if taken diag left down\n");
+        return 0;
+      }
+    }
+  }
+  //ход по диагонали вверх и направо
+  else if (current_n - check_next_n > 0 && current_ch - check_next_ch < 0) {
+    for (i = current_n - 1, j = current_ch + 1; i > check_next_n; i--, j++) {
+      if (arr[i][j] != ' ') {
+        printf("Cell if taken diag right up\n");
+        return 0;
+      }
+    }
+  }
+  //ход по диагонали вверх и налево
+  else if (current_n - check_next_n > 0 && current_ch - check_next_ch > 0) {
+    for (i = current_n - 1, j = current_ch - 1; i > check_next_n; i--, j--) {
+      if (arr[i][j] != ' ') {
+        printf("Cell if taken diag left up\n");
+        return 0;
+      }
+    }
+  }
+  return 1;
 }

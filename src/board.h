@@ -16,7 +16,7 @@ int check_for_right_char(char ch);
 int check_for_right_num(char ch);
 int check_for_figure(char op, char arr[I][J], char current_ch, char current_n, char next_ch, char next_n, int color);
 int turn(int white_or_black);
-int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n, int color);
+int pawn_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 int is_it_first_move(char arr[I][J], int current_ch, int current_n);
 int rook_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 int bishop_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
@@ -24,5 +24,6 @@ int queen_move(char arr[I][J], int current_ch, int current_n, char next_ch, char
 int king_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 int take_or_move(char op, char arr[I][J], char next_ch, char next_n);
 int knight_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
+int possibility_to_move(char arr[I][J], int current_ch, int current_n, char next_ch, char next_n);
 
 #endif
