@@ -1,27 +1,35 @@
-TARGET = bin/chessviz
 CC = gcc
 CFLAGS = -Wall -Werror
+OBJ = $(CC) -c $< -o $@ $(CFLAGS)
 
-.PHONY: clean all default
+.PHONY: clean test
 
-default: bin build $(TARGET)
-all: default
+default: bin/chessviz bin/chessviz_test
 
-OBJECTS = $(patsubst src/%.c, build/%.o, $(wildcard src/*.c))
+bin/chessviz: build/src/main.o build/src/board_print_plain.o build/src/conversion.o build/src/board.o
+	mkdir -p bin
+	$(CC) $^ -o $@ $(CFLAGS)
 
-build/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+build/src/main.o: src/main.c
+	mkdir -p build
+	mkdir -p build/src
+	$(OBJ)
 
-.PRECIOUS: $(TARGET) $(OBJECTS)
+build/src/board_print_plain.o: src/board_print_plain.c src/board_print_plain.h
+	$(OBJ)
 
-$(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall -o $@
+build/src/board.o: src/board.c src/board.h
+	$(OBJ)
 
-bin:
-	mkdir bin
-build:
-	mkdir build
+build/src/conversion.o: src/conversion.c src/conversion.h
+	$(OBJ)
+
+bin/chessviz_test: build/test/main.o build/src/board_print_plain.o build/src/conversion.o build/src/board.o
+	$(CC) $^ -o $@ $(CFLAGS)
+
+build/test/main.o: test/main.c thirdparty/ctest.h src/board.h src/board_print_plain.h src/conversion.h
+	mkdir -p build/test
+	$(OBJ) -I thirdparty -I src
 
 clean:
-	-rm -rf build/*.o
-	-rm -f $(TARGET)
+	rm -rf build bin
