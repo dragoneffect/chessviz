@@ -1,6 +1,6 @@
 #include "board.h"
 
-int read(int value, const char *input) {
+int read_input(int value, const char *input) {
   //функция для правильного чтения ввода
   size_t length = 0;
   char *end = NULL;

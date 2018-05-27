@@ -30,7 +30,7 @@ int main() {
       fclose(file);
       do {
         //ввод количества ходов
-        result = read(choice, "How many moves do you want to make?");
+        result = read_input(choice, "How many moves do you want to make?");
         if (!result) {
           printf("Please, try again\n");
         }

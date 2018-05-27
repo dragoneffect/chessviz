@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int read(int value, const char *input);
+int read_input(int value, const char *input);
 int make_a_move(int param, char arr[I][J], int color, FILE *notes_file);
 int check_for_right_move(char first_char, char first_num, char last_char, char last_num);
 int check_for_right_char(char ch);
