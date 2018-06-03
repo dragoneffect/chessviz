@@ -4,7 +4,11 @@ OBJ = $(CC) -c $< -o $@ $(CFLAGS)
 
 .PHONY: clean test
 
-default: bin/chessviz bin/chessviz_test
+default: bin/chessviz
+
+test: bin/chessviz_test
+	./bin/chessviz_test
+	
 
 bin/chessviz: build/src/main.o build/src/board_print_plain.o build/src/conversion.o build/src/board.o
 	mkdir -p bin
